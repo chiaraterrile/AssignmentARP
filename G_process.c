@@ -23,12 +23,12 @@ void error(const char *msg)
 int main(int argc, char *argv[])
 {
 
-     printf("G process execution:\n");
+     printf("G process execution\n");
      // G process reads from the socket (server) the token received from P, and sends it with a pipe to P
  
      int sockfd, newsockfd, portno;
      socklen_t clilen;
-     char buffer[256];
+     double buffer;
      struct sockaddr_in serv_addr, cli_addr;
      int n;
 
@@ -43,8 +43,8 @@ int main(int argc, char *argv[])
      bzero((char *) &serv_addr, sizeof(serv_addr));
      portno = atoi(argv[1]);
     
-     char *myfifo = argv[2]; //create the fifo
-
+     char *fifo_PG = argv[2]; //create the fifo
+     printf("Fifo PG created \n");
      serv_addr.sin_family = AF_INET;
      serv_addr.sin_addr.s_addr = INADDR_ANY;
      serv_addr.sin_port = htons(portno);
@@ -59,22 +59,24 @@ int main(int argc, char *argv[])
      if (newsockfd < 0) 
           error("ERROR on accept");
 
-     bzero(buffer,256);
-     n = read(newsockfd,buffer,255);
+     bzero(&buffer,sizeof(buffer));
 
-     if (n < 0) error("ERROR reading from socket");
-
-     int fd = open(myfifo, O_RDWR); // opening the fifo
+     
+     int fd_PG = open(fifo_PG, O_RDWR); // opening the fifo
      while (1)
      {
 
           n = read(newsockfd, &buffer, sizeof(buffer)); // read message in the socket
+          printf("Message arrived to G and sent to P : %.3f\n", buffer);
           if (n < 0)
                error("ERROR reading from socket");
+          
+          //printf("Here is the message: %.3f \n",buffer);
+         
+          int nb = write(fd_PG, &buffer, sizeof(buffer)); // write the message in the fifo
+          
 
-          int nb = write(fd, &buffer, sizeof(buffer)); // write the message in the fifo
-
-          printf("Here is the message sent to P: %s\n",buffer);
+         
      }
      
      return 0; 
