@@ -24,11 +24,16 @@
        __typeof__ (b) _b = (b); \
      _a > _b ? _a : _b; })
 
+typedef struct {
+	double value;
+	time_t timestamp;
+}token;
 
-double newToken ;
+token newToken ;
 char *timeString;
 pid_t pid_S, pid_G, pid_L, pid_P;
 
+		
 char *signame[] = {"INVALID", "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", "SIGKILL", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM", "SIGTERM", "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP", "SIGTTIN", "SIGTTOU", "SIGURG", "SIGXCPU", "SIGXFSZ", "SIGVTALRM", "SIGPROF", "SIGWINCH", "SIGPOLL", "SIGPWR", "SIGSYS", NULL};
 
 const char *fifo_PS = "fifo_PS"; //path
@@ -44,16 +49,18 @@ void error(const char *msg)
 }
 
 /* function to write the log file */
-void WriteLog(pid_t PID, float msg, double token)
+//void WriteLog(pid_t PID, float msg, double token)
+void WriteLog(float msg, token token_rx)
 {
 	FILE *file;
 	file = fopen("LogFile.log", "a");
 	time_t time_clock; //current time
 	time_clock = time(NULL);
 	//timeString = ctime(&currentTime);
+	//(int)time(NULL)
 	
-	fprintf(file, "-%sPID: %d value:%.3f.\n", ctime(&time_clock), PID, msg);
-	fprintf(file, "-%s token : %.3f.\n\n", ctime(&time_clock), token);
+	fprintf(file, "timestamp : %d from  G|S  process , received message :%.3f.\n", (int)time_clock, msg);
+	fprintf(file, "timestamp : %d from P process, sent token : %.3f.\n\n", (int)token_rx.timestamp, token_rx.value);
 
 	fclose(file);
 }
@@ -79,9 +86,9 @@ void signal_handler(int signo)
 	{
 		printf("Received SIGCONT\n");
 		printf("Process S PID %d\n :", pid_S);
-		WriteLog(pid_S, (float)signo, newToken);
+		WriteLog((float)signo, newToken);
 		printf("-%sPID: %d value:%s.\n", timeString, pid_S, signame[(int)signo]);
-		printf("-%s%.3f.\n\n", timeString, newToken);
+		printf("-%s%.3f.\n\n", timeString, newToken.value);
 	}
 }
 
@@ -124,7 +131,8 @@ int main(int argc, char *argv[])
 	char *argdata[5];  //Process G execution argument
 	char *shell_G = "./G"; //Process G executable path
 
-	float msg1, msg2, t; //Message from P to L
+	float msg1, t; //Message from P to L
+	token msg2;
 	//char refFreqchar = refFreq ;
 	
 	argdata[0] = shell_G;
@@ -223,7 +231,8 @@ int main(int argc, char *argv[])
 			error("ERROR connecting");
 
 		//n = write(sockfd, &G_msg, sizeof(G_msg));
-		n = write(sockfd, &newToken, sizeof(newToken));
+		n = write(sockfd, &newToken.value, sizeof(newToken.value));
+		
 		if (n < 0)
 			error("ERROR writing to socket");
 
@@ -273,25 +282,32 @@ int main(int argc, char *argv[])
 					} */
 					
 					printf("From G recivedMsg = %.3f \n", G_msg);
-
+					
 					n = write(fd_PL, &G_msg, sizeof(G_msg));
 					if (n < 0)
 						error("ERROR writing to L");
 					prec_tok = G_msg;
-					newToken = prec_tok + 2 * (1 - pow(prec_tok,2)/2 ) * 2 * 3.14 * 1;
-					printf("NEW TOKEN = %.3f \n", newToken);
+					newToken.value = prec_tok + 2 * (1 - pow(prec_tok,2)/2 ) * 2 * 3.14 * 1;
+					printf("NEW TOKEN = %.3f \n", newToken.value);
+					
 					//G_msg += 1; 			////////////////////////////////////////////FORMULA////////////////////////////////////////////////
 
 					//newToken = G_msg;
 					
 					// Send new value to L
-					n = write(fd_PL, &newToken, sizeof(newToken));
+					n = write(fd_PL, &newToken, sizeof(newToken.value));
 					if (n < 0)
 						error("ERROR writing to L");
 
 					// Write new value to the socket
 					//n = write(sockfd, &G_msg, sizeof(G_msg));
-					n = write(sockfd, &newToken, sizeof(newToken));
+					n = write(sockfd, &newToken.value, sizeof(newToken.value));
+					time_t time_clock; //current time
+					time_clock = time(NULL);
+		
+					newToken.timestamp = time_clock;
+					printf("------------------timestamp : %d .\n", (int)newToken.timestamp);
+
 					if (n < 0)
 						error("ERROR writing to socket");
 					
@@ -307,6 +323,7 @@ int main(int argc, char *argv[])
 				if (n < 0)
 					error("ERROR reading from S");
 				printf("From S recivedMsg = %.3f \n", S_msg);
+				
 				sleep((int)S_msg);
 				break;
 
@@ -350,10 +367,13 @@ int main(int argc, char *argv[])
 					error("ERROR receiving from P");
 
 				n = read(fd_PL, &msg2, sizeof(msg2));
+				
+				printf("I have read : timestamp -> %d  and value -> %f .\n", (int)msg2.timestamp, msg2.value);
+
 				if (n < 0)
 					error("ERROR receiving from P");
 
-				WriteLog(getpid(), msg1, msg2);
+				WriteLog( msg1, msg2);
 			}
 
 			close(fd_PL);
