@@ -23,6 +23,9 @@
        __typeof__ (b) _b = (b); \
      _a > _b ? _a : _b; })
 
+
+typedef enum { false, true } bool;
+
 typedef struct {
 	double value;
 	double timestamp;
@@ -31,7 +34,7 @@ typedef struct {
 token newToken ;
 char *timeString;
 pid_t pid_S, pid_G, pid_L, pid_P;
-
+int isG = 1;
 		
 char *signame[] = {"INVALID", "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", "SIGKILL", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM", "SIGTERM", "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP", "SIGTTIN", "SIGTTOU", "SIGURG", "SIGXCPU", "SIGXFSZ", "SIGVTALRM", "SIGPROF", "SIGWINCH", "SIGPOLL", "SIGPWR", "SIGSYS", NULL};
 
@@ -77,34 +80,54 @@ double ComputeTimeStamp ()
 
 /* function to write the log file */
 //void WriteLog(pid_t PID, float msg, double token)
-void WriteLog(token msg, token token_rx)
+void WriteLog(token msg, token token_rx,char signo_ch, bool isG)
 {
 	FILE *file;
 	file = fopen("LogFile.log", "a");
 	
+	if (isG == true)
+	{
+			fprintf(file, "timestamp : %.6f from  G  process , received message :%.3f.\n", msg.timestamp, msg.value);
+			fprintf(file, "timestamp : %.6f from P process, sent token : %.3f.\n\n", token_rx.timestamp, token_rx.value);
+	}
+	else if ( isG == false)
+	{
+		
+		fprintf(file, "timestamp : %.6f .\n", msg.timestamp);
+		fprintf(file, "From S process signal: %.s.\n\n", &signo_ch);	
+	}
 	
-	fprintf(file, "timestamp : %.6f from  G|S  process , received message :%.3f.\n", msg.timestamp, msg.value);
-	fprintf(file, "timestamp : %.6f from P process, sent token : %.3f.\n\n", token_rx.timestamp, token_rx.value);
 
 	fclose(file);
 }
 
 /* signal handler to manage every signal and the relative functionality (i.e. resuming or interrupting a process) */
 void signal_handler(int signo)
-{
+{	
+	
 	if (signo == SIGUSR1) // STOP
 	{
+		token msg;
 		printf("Received SIGUSR1\n");
+		msg.timestamp = ComputeTimeStamp();
+		msg.value = (float)signo;
 		kill(pid_P, SIGSTOP); // sending tokens
 		kill(pid_G, SIGSTOP); // receiving tokens
 		kill(pid_L, SIGSTOP); // logging
+		char str[] = "SIGSUR1";
+		WriteLog(msg, newToken,*str,false);
 	}
 	else if (signo == SIGUSR2) // START
 	{
+		token msg;
 		printf("Received SIGUSR2\n");
+		msg.timestamp = ComputeTimeStamp();
+		msg.value = (float)signo;
 		kill(pid_P, SIGCONT); // sending tokens
 		kill(pid_G, SIGCONT); // receiving tokens
 		kill(pid_L, SIGCONT); // logging
+		char str[] = "SIGSUR2";
+		WriteLog(msg, newToken,*str,false);
 	}
 	else if (signo == SIGCONT) // DUMP LOG
 	{
@@ -115,8 +138,8 @@ void signal_handler(int signo)
 		
 		msg.timestamp = ComputeTimeStamp();
 		msg.value = (float)signo;
-
-		WriteLog(msg, newToken);
+		char str[] = "GeeksforGeeks";
+		WriteLog(msg, newToken,*str,false);
 		printf("-%sPID: %d value:%s.\n", timeString, pid_S, signame[(int)signo]);
 		printf("-%s%.3f.\n\n", timeString, newToken.value);
 	}
@@ -301,6 +324,7 @@ int main(int argc, char *argv[])
 				}
 				else if (FD_ISSET(fd_PG, &rfds))
 				{
+					isG = 1;
 					// If G, make the computation and log the results through L
 					n = read(fd_PG, &G_msg, sizeof(G_msg));
 					if (n < 0)
@@ -356,6 +380,7 @@ int main(int argc, char *argv[])
 
 			case 2:
 				// If two active pipes, give priority to S
+				//isG = false;
 				n = read(fd_PS, &S_msg, sizeof(S_msg));
 				if (n < 0)
 					error("ERROR reading from S");
@@ -409,8 +434,9 @@ int main(int argc, char *argv[])
 				if (n < 0)
 					error("ERROR receiving from P");
 
+				char str[] = " ";
 
-				WriteLog( msg1, msg2);
+				WriteLog( msg1, msg2,*str,true);
 			}
 
 			close(fd_PL);
@@ -430,6 +456,7 @@ int main(int argc, char *argv[])
 			if (pid_G == 0)
 			{
 				printf("G process with PID : %d.\n", getpid());
+				isG = true;
 				/*execvp(argdata[0], argdata);
 				error("Exec failed");
 				return 0;
