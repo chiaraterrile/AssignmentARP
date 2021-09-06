@@ -15,7 +15,6 @@
 #include <math.h>
 #include <errno.h>
 #include <signal.h>
-#include <time.h>
 #include <sys/select.h>
 #include <netdb.h>
 
@@ -26,7 +25,7 @@
 
 typedef struct {
 	double value;
-	time_t timestamp;
+	double timestamp;
 }token;
 
 token newToken ;
@@ -48,19 +47,44 @@ void error(const char *msg)
 	exit(-1);
 }
 
+int ComputeTimeStamp1 ()
+{
+	time_t currentTime;
+	currentTime = time(NULL);
+    int t_final = (int) currentTime;
+}
+
+double ComputeTimeStamp ()
+{
+    struct timeval ts;
+	gettimeofday(&ts, NULL); // return value can be ignored
+	long int seconds = ts.tv_sec; // seconds
+	long int useconds = ts.tv_usec; // microseconds
+
+     int size_us = log10(useconds)+1;
+     double useconds_float = (double)useconds* pow(10, -size_us);
+     double seconds_float = (float)seconds;
+	 //printf( " **************** useconds FLOAT  : %.6f .\n", useconds_float);
+    //  printf( " **************** seconds FLOAT  : %.6f .\n", seconds_float);
+    double t_final =  seconds_float + useconds_float;
+      //printf( " **************** t final   : %lf .\n",t_final);
+
+    
+     return t_final;
+}
+    
+
+
 /* function to write the log file */
 //void WriteLog(pid_t PID, float msg, double token)
-void WriteLog(float msg, token token_rx)
+void WriteLog(token msg, token token_rx)
 {
 	FILE *file;
 	file = fopen("LogFile.log", "a");
-	time_t time_clock; //current time
-	time_clock = time(NULL);
-	//timeString = ctime(&currentTime);
-	//(int)time(NULL)
 	
-	fprintf(file, "timestamp : %d from  G|S  process , received message :%.3f.\n", (int)time_clock, msg);
-	fprintf(file, "timestamp : %d from P process, sent token : %.3f.\n\n", (int)token_rx.timestamp, token_rx.value);
+	
+	fprintf(file, "timestamp : %.6f from  G|S  process , received message :%.3f.\n", msg.timestamp, msg.value);
+	fprintf(file, "timestamp : %.6f from P process, sent token : %.3f.\n\n", token_rx.timestamp, token_rx.value);
 
 	fclose(file);
 }
@@ -86,7 +110,13 @@ void signal_handler(int signo)
 	{
 		printf("Received SIGCONT\n");
 		printf("Process S PID %d\n :", pid_S);
-		WriteLog((float)signo, newToken);
+
+		token msg;
+		
+		msg.timestamp = ComputeTimeStamp();
+		msg.value = (float)signo;
+
+		WriteLog(msg, newToken);
 		printf("-%sPID: %d value:%s.\n", timeString, pid_S, signame[(int)signo]);
 		printf("-%s%.3f.\n\n", timeString, newToken.value);
 	}
@@ -118,7 +148,7 @@ int main(int argc, char *argv[])
 
 	char ip[32];		// ip adress of the machine
 	char port[128];		// port number of processes
-	char refFreq[128];		// frequency of the tokeen wave
+	char refFreq[128];		// frequency of the token wave
 	int waitingTime;	// waiting time
 
 	// save the variables from the config fle
@@ -131,8 +161,8 @@ int main(int argc, char *argv[])
 	char *argdata[5];  //Process G execution argument
 	char *shell_G = "./G"; //Process G executable path
 
-	float msg1, t; //Message from P to L
-	token msg2;
+	float t; 
+	token msg1,msg2; //Message from P to L
 	//char refFreqchar = refFreq ;
 	
 	argdata[0] = shell_G;
@@ -192,7 +222,7 @@ int main(int argc, char *argv[])
 
 	if (pid_P == 0) // son's code (P process execution) 
 	{
-		double G_msg ; // message from G
+		token G_msg ; // message from G
 		double S_msg;	 // message from S
 		int retval, fd;
 		fd_set rfds;
@@ -206,7 +236,7 @@ int main(int argc, char *argv[])
 		struct sockaddr_in serv_addr;
 		struct hostent *server;
 		portno = atoi(port);
-		double prec_tok ;
+		token prec_tok ;
 
 		printf("P process with PID : %d.\n", getpid());
 
@@ -281,13 +311,13 @@ int main(int argc, char *argv[])
 						break;
 					} */
 					
-					printf("From G recivedMsg = %.3f \n", G_msg);
+					printf("From G recivedMsg = %.3f \n", G_msg.value);
 					
 					n = write(fd_PL, &G_msg, sizeof(G_msg));
 					if (n < 0)
 						error("ERROR writing to L");
 					prec_tok = G_msg;
-					newToken.value = prec_tok + 2 * (1 - pow(prec_tok,2)/2 ) * 2 * 3.14 * 1;
+					newToken.value = prec_tok.value + 2 * (1 - pow(prec_tok.value,2)/2 ) * 2 * 3.14 * 1;
 					printf("NEW TOKEN = %.3f \n", newToken.value);
 					
 					//G_msg += 1; 			////////////////////////////////////////////FORMULA////////////////////////////////////////////////
@@ -295,18 +325,25 @@ int main(int argc, char *argv[])
 					//newToken = G_msg;
 					
 					// Send new value to L
-					n = write(fd_PL, &newToken, sizeof(newToken.value));
+					n = write(fd_PL, &newToken, sizeof(newToken));
 					if (n < 0)
 						error("ERROR writing to L");
 
 					// Write new value to the socket
 					//n = write(sockfd, &G_msg, sizeof(G_msg));
+					
 					n = write(sockfd, &newToken.value, sizeof(newToken.value));
-					time_t time_clock; //current time
-					time_clock = time(NULL);
-		
-					newToken.timestamp = time_clock;
-					printf("------------------timestamp : %d .\n", (int)newToken.timestamp);
+					//time_t time_clock; //current time
+					//time_clock = time(NULL);
+					
+					newToken.timestamp = ComputeTimeStamp();
+
+					
+
+					
+					
+
+					printf("------------------timestamp : %.6f .\n", newToken.timestamp);
 
 					if (n < 0)
 						error("ERROR writing to socket");
@@ -368,10 +405,10 @@ int main(int argc, char *argv[])
 
 				n = read(fd_PL, &msg2, sizeof(msg2));
 				
-				printf("I have read : timestamp -> %d  and value -> %f .\n", (int)msg2.timestamp, msg2.value);
 
 				if (n < 0)
 					error("ERROR receiving from P");
+
 
 				WriteLog( msg1, msg2);
 			}

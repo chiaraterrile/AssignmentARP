@@ -12,6 +12,7 @@
 #include <netinet/in.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <math.h>
 
 
 void error(const char *msg)
@@ -19,6 +20,39 @@ void error(const char *msg)
      perror(msg);
      exit(1);
 }
+
+typedef struct {
+	double value;
+	double timestamp;
+}token;
+
+int ComputeTimeStamp1 ()
+{
+	time_t currentTime;
+	currentTime = time(NULL);
+     int t_final = (int) currentTime;
+}
+
+
+double ComputeTimeStamp ()
+{
+     struct timeval ts;
+	gettimeofday(&ts, NULL); // return value can be ignored
+	long int seconds = ts.tv_sec; // seconds
+	long int useconds = ts.tv_usec; // microseconds
+
+     int size_us = log10(useconds)+1;
+     double useconds_float = (double)useconds* pow(10, -size_us);
+     double seconds_float = (float)seconds;
+	 //printf( " **************** useconds FLOAT  : %.6f .\n", useconds_float);
+    //  printf( " **************** seconds FLOAT  : %.6f .\n", seconds_float);
+    double t_final =  seconds_float + useconds_float;
+      //printf( " **************** t final   : %lf .\n",t_final);
+
+    
+     return t_final;
+} 
+
 
 int main(int argc, char *argv[])
 {
@@ -28,7 +62,7 @@ int main(int argc, char *argv[])
  
      int sockfd, newsockfd, portno;
      socklen_t clilen;
-     double buffer;
+     token buffer;
      struct sockaddr_in serv_addr, cli_addr;
      int n;
 
@@ -66,13 +100,15 @@ int main(int argc, char *argv[])
      while (1)
      {
 
-          n = read(newsockfd, &buffer, sizeof(buffer)); // read message in the socket
-          printf("Message arrived to G and sent to P : %.3f\n", buffer);
+          n = read(newsockfd, &buffer.value, sizeof(buffer.value)); // read message in the socket
+          printf("Message arrived to G and sent to P : %.3f\n", buffer.value);
           if (n < 0)
                error("ERROR reading from socket");
           
           //printf("Here is the message: %.3f \n",buffer);
-         
+
+          
+		buffer.timestamp = ComputeTimeStamp ();
           int nb = write(fd_PG, &buffer, sizeof(buffer)); // write the message in the fifo
           
 
