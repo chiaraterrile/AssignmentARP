@@ -31,10 +31,15 @@ typedef struct {
 	double timestamp;
 }token;
 
+//char signo_ch[256];
 token newToken ;
 char *timeString;
 pid_t pid_S, pid_G, pid_L, pid_P;
 int isG = 1;
+
+
+
+
 		
 char *signame[] = {"INVALID", "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", "SIGKILL", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM", "SIGTERM", "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP", "SIGTTIN", "SIGTTOU", "SIGURG", "SIGXCPU", "SIGXFSZ", "SIGVTALRM", "SIGPROF", "SIGWINCH", "SIGPOLL", "SIGPWR", "SIGSYS", NULL};
 
@@ -43,6 +48,15 @@ const char *fifo_PG = "fifo_PG"; //path
 const char *fifo_PL = "fifo_PL"; //path
 
 FILE *fp; //Configuration file
+
+int min(int num1, int num2) 
+{
+    return (num1 > num2 ) ? num2 : num1;
+}
+
+int fd_PS ;
+
+	
 
 void error(const char *msg)
 {
@@ -80,7 +94,7 @@ double ComputeTimeStamp ()
 
 /* function to write the log file */
 //void WriteLog(pid_t PID, float msg, double token)
-void WriteLog(token msg, token token_rx,char* signo_ch, bool isG)
+void WriteLog(token msg, token token_rx,char *signo_ch, bool isG)
 {
 	FILE *file;
 	file = fopen("LogFile.log", "a");
@@ -104,18 +118,24 @@ void WriteLog(token msg, token token_rx,char* signo_ch, bool isG)
 /* signal handler to manage every signal and the relative functionality (i.e. resuming or interrupting a process) */
 void signal_handler(int signo)
 {	
-	
+	int fd_PS = open(fifo_PS, O_RDWR); // open pipe between P and S
+	token msg;
 	if (signo == SIGUSR1) // STOP
 	{
 		token msg;
 		printf("Received SIGUSR1\n");
 		msg.timestamp = ComputeTimeStamp();
 		msg.value = (float)signo;
-		kill(pid_P, SIGSTOP); // sending tokens
-		kill(pid_G, SIGSTOP); // receiving tokens
-		kill(pid_L, SIGSTOP); // logging
-		char str[] = "SIGSUR1";
+		//kill(pid_P, SIGSTOP); // sending tokens
+		//kill(pid_G, SIGSTOP); // receiving tokens
+		//kill(pid_L, SIGSTOP); // logging
+		char str[] = "SIGUSR1";
+		//int ns = write(*signo_ch, &str, sizeof(str)); 
+		//printf( "############# %s. \n", signo_ch);
+		int nb = write(fd_PS, &str, sizeof(str)); // write the message in the fifo
+		
 		WriteLog(msg, newToken,str,false);
+		
 	}
 	else if (signo == SIGUSR2) // START
 	{
@@ -127,7 +147,11 @@ void signal_handler(int signo)
 		kill(pid_G, SIGCONT); // receiving tokens
 		kill(pid_L, SIGCONT); // logging
 		char str[] = "SIGSUR2";
+		//int ns = write(*signo_ch, &str, sizeof(str)); 
+		int nb = write(fd_PS, &str, sizeof(str)); // write the message in the fifo
 		WriteLog(msg, newToken,str,false);
+		
+
 	}
 	else if (signo == SIGCONT) // DUMP LOG
 	{
@@ -139,10 +163,13 @@ void signal_handler(int signo)
 		msg.timestamp = ComputeTimeStamp();
 		msg.value = (float)signo;
 		char str[] = "SIGCONT";
+		//int ns = write(*signo_ch, &str, sizeof(str)); 
+		int nb = write(fd_PS, &str, sizeof(str)); // write the message in the fifo
 		WriteLog(msg, newToken,str,false);
 		printf("-%sPID: %d value:%s.\n", timeString, pid_S, signame[(int)signo]);
 		printf("-%s%.3f.\n\n", timeString, newToken.value);
 	}
+	//WriteLog(msg, newToken,signo_ch,false);
 }
 
 /* function to read info in the configuration file and save them into the relative variables  */
@@ -194,7 +221,7 @@ int main(int argc, char *argv[])
 	argdata[3] = refFreq;
 	argdata[4] = NULL;
 
-
+	
 
 /*------------------- Pipes Creation -------------------*/
 
@@ -214,6 +241,8 @@ int main(int argc, char *argv[])
 		unlink(fifo_PS);
 		error("Cannot open fifo P|S");
 	}
+	
+	
 
 	int fd_PG = open(fifo_PG, O_RDWR); // open pipe between P and G
 
@@ -246,7 +275,7 @@ int main(int argc, char *argv[])
 	if (pid_P == 0) // son's code (P process execution) 
 	{
 		token G_msg ; // message from G
-		double S_msg;	 // message from S
+		char S_msg[256];	 // message from S
 		int retval, fd;
 		fd_set rfds;
 
@@ -296,13 +325,18 @@ int main(int argc, char *argv[])
 			FD_ZERO(&rfds);
 			FD_SET(fd_PS, &rfds);
 			FD_SET(fd_PG, &rfds);
-
+			
 			fd = max(fd_PS, fd_PG);
+			//fd = max(fd_PS, fd_PG);
+
+			printf("fd PS = %d ,  fd PG =  %d .\n", fd_PS, fd_PG);
+
 
 			tv.tv_sec = 5;
 			tv.tv_usec = 0;
 
-			retval = select(fd + 1, &rfds, NULL, NULL, &tv);
+			//retval = select(fd + 1, &rfds, NULL, NULL, &tv);
+			retval = select(20, &rfds, NULL, NULL, &tv);
 
 			switch (retval)
 			{
@@ -319,8 +353,9 @@ int main(int argc, char *argv[])
 					n = read(fd_PS, &S_msg, sizeof(S_msg));
 					if (n < 0)
 						error("ERROR reading from S");
-					printf("From S recivedMsg = %.3f \n", S_msg);
-					sleep((int)S_msg);
+					printf("From S recivedMsg = %s \n", S_msg);
+					n = write(fd_PL, &S_msg, sizeof(S_msg));
+					//sleep((int)S_msg);
 				}
 				else if (FD_ISSET(fd_PG, &rfds))
 				{
@@ -334,6 +369,8 @@ int main(int argc, char *argv[])
 						printf("Value should be between -1 and 1!.\n");
 						break;
 					} */
+
+
 					
 					printf("From G recivedMsg = %.3f \n", G_msg.value);
 					
@@ -381,12 +418,15 @@ int main(int argc, char *argv[])
 			case 2:
 				// If two active pipes, give priority to S
 				//isG = false;
+				printf("######################### I am here \n");
 				n = read(fd_PS, &S_msg, sizeof(S_msg));
 				if (n < 0)
 					error("ERROR reading from S");
-				printf("From S recivedMsg = %.3f \n", S_msg);
+				printf("########## From S recived Msg = %s \n", S_msg);
+				n = write(fd_PL, &S_msg, sizeof(S_msg));
+				if (n < 0)
+				error("ERROR writing to P");
 				
-				sleep((int)S_msg);
 				break;
 
 			default:
@@ -479,6 +519,7 @@ int main(int argc, char *argv[])
 
 			if (signal(SIGUSR1, signal_handler) == SIG_ERR)
 				printf("Can't catch SIGUSR1\n");
+			
 
 			if (signal(SIGCONT, signal_handler) == SIG_ERR)
 				printf("Can't catch SIGCONT\n");
@@ -488,14 +529,14 @@ int main(int argc, char *argv[])
 
 			//srand(time(0)); //current time as seed of random number generator
 			sleep(5);
-
+			char msg[256];
 			while (1)
 			{
-				/* t = (rand() % (10 + 1));
-				n = write(fd_PS, &t, sizeof(t));
-				if (n < 0)
-					error("ERROR writing to P");
-				sleep(rand() % (10 + 1)); */
+				// t = (rand() % (10 + 1));
+				//n = write(fd_PS, &msg, sizeof(msg));
+				//if (n < 0)
+				//	error("ERROR writing to P");
+				//sleep(rand() % (10 + 1)); */
 			}
 
 			close(fd_PS);

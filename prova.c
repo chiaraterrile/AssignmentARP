@@ -26,13 +26,16 @@ void f1( int t1, int t2){
      printf("t1 = %d \n", t1);
 	
 }
+
 int main(int argc, char *argv[])
 {
 
-if (f9 == true )
-{
-      printf("ciaoooooo");
-}
+char buffer[256];
+
+char str[] = "ciao";
+
+int nb = write(*buffer, &str, sizeof(str)); 
+printf( "%s. \n", buffer);
     
 }
 
