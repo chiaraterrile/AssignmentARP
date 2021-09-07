@@ -80,7 +80,7 @@ double ComputeTimeStamp ()
 
 /* function to write the log file */
 //void WriteLog(pid_t PID, float msg, double token)
-void WriteLog(token msg, token token_rx,char signo_ch, bool isG)
+void WriteLog(token msg, token token_rx,char* signo_ch, bool isG)
 {
 	FILE *file;
 	file = fopen("LogFile.log", "a");
@@ -94,7 +94,7 @@ void WriteLog(token msg, token token_rx,char signo_ch, bool isG)
 	{
 		
 		fprintf(file, "timestamp : %.6f .\n", msg.timestamp);
-		fprintf(file, "From S process signal: %.s.\n\n", &signo_ch);	
+		fprintf(file, "From S process signal: %s.\n\n", signo_ch);	
 	}
 	
 
@@ -115,7 +115,7 @@ void signal_handler(int signo)
 		kill(pid_G, SIGSTOP); // receiving tokens
 		kill(pid_L, SIGSTOP); // logging
 		char str[] = "SIGSUR1";
-		WriteLog(msg, newToken,*str,false);
+		WriteLog(msg, newToken,str,false);
 	}
 	else if (signo == SIGUSR2) // START
 	{
@@ -127,7 +127,7 @@ void signal_handler(int signo)
 		kill(pid_G, SIGCONT); // receiving tokens
 		kill(pid_L, SIGCONT); // logging
 		char str[] = "SIGSUR2";
-		WriteLog(msg, newToken,*str,false);
+		WriteLog(msg, newToken,str,false);
 	}
 	else if (signo == SIGCONT) // DUMP LOG
 	{
@@ -138,8 +138,8 @@ void signal_handler(int signo)
 		
 		msg.timestamp = ComputeTimeStamp();
 		msg.value = (float)signo;
-		char str[] = "GeeksforGeeks";
-		WriteLog(msg, newToken,*str,false);
+		char str[] = "SIGCONT";
+		WriteLog(msg, newToken,str,false);
 		printf("-%sPID: %d value:%s.\n", timeString, pid_S, signame[(int)signo]);
 		printf("-%s%.3f.\n\n", timeString, newToken.value);
 	}
@@ -436,7 +436,7 @@ int main(int argc, char *argv[])
 
 				char str[] = " ";
 
-				WriteLog( msg1, msg2,*str,true);
+				WriteLog( msg1, msg2,str,true);
 			}
 
 			close(fd_PL);
