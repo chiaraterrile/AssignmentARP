@@ -31,6 +31,11 @@ typedef struct {
 	double timestamp;
 }token;
 
+typedef struct {
+	char sig_name;
+	double timestamp;
+}message;
+
 //char signo_ch[256];
 token newToken ;
 char *timeString;
@@ -134,7 +139,7 @@ void signal_handler(int signo)
 		//printf( "############# %s. \n", signo_ch);
 		int nb = write(fd_PS, &str, sizeof(str)); // write the message in the fifo
 		
-		WriteLog(msg, newToken,str,false);
+		//WriteLog(msg, newToken,str,false);
 		
 	}
 	else if (signo == SIGUSR2) // START
@@ -149,7 +154,7 @@ void signal_handler(int signo)
 		char str[] = "SIGSUR2";
 		//int ns = write(*signo_ch, &str, sizeof(str)); 
 		int nb = write(fd_PS, &str, sizeof(str)); // write the message in the fifo
-		WriteLog(msg, newToken,str,false);
+		//WriteLog(msg, newToken,str,false);
 		
 
 	}
@@ -165,7 +170,7 @@ void signal_handler(int signo)
 		char str[] = "SIGCONT";
 		//int ns = write(*signo_ch, &str, sizeof(str)); 
 		int nb = write(fd_PS, &str, sizeof(str)); // write the message in the fifo
-		WriteLog(msg, newToken,str,false);
+		//WriteLog(msg, newToken,str,false);
 		printf("-%sPID: %d value:%s.\n", timeString, pid_S, signame[(int)signo]);
 		printf("-%s%.3f.\n\n", timeString, newToken.value);
 	}
@@ -212,8 +217,10 @@ int main(int argc, char *argv[])
 	char *shell_G = "./G"; //Process G executable path
 
 	float t; 
-	token msg1,msg2; //Message from P to L
-	//char refFreqchar = refFreq ;
+	token msg1,msg2; // Message from P to L when coming from G
+
+	char msg3[256]; // Message from P to L when coming from S
+
 	
 	argdata[0] = shell_G;
 	argdata[1] = port;
@@ -354,6 +361,13 @@ int main(int argc, char *argv[])
 					if (n < 0)
 						error("ERROR reading from S");
 					printf("From S recivedMsg = %s \n", S_msg);
+
+
+					int flag = 0; // flag to indicate if the message is coming from G or from S
+					n = write(fd_PL, &flag, sizeof(flag));
+					if (n < 0)
+						error("ERROR writing to L");
+
 					n = write(fd_PL, &S_msg, sizeof(S_msg));
 					//sleep((int)S_msg);
 				}
@@ -373,7 +387,12 @@ int main(int argc, char *argv[])
 
 					
 					printf("From G recivedMsg = %.3f \n", G_msg.value);
-					
+
+					int flag = 1; // flag to indicate if the message is coming from G or from S
+					n = write(fd_PL, &flag, sizeof(flag));
+					if (n < 0)
+						error("ERROR writing to L");
+
 					n = write(fd_PL, &G_msg, sizeof(G_msg));
 					if (n < 0)
 						error("ERROR writing to L");
@@ -423,6 +442,13 @@ int main(int argc, char *argv[])
 				if (n < 0)
 					error("ERROR reading from S");
 				printf("########## From S recived Msg = %s \n", S_msg);
+
+
+				int flag = 0; // flag to indicate if the message is coming from G or from S
+				n = write(fd_PL, &flag, sizeof(flag));
+				if (n < 0)
+					error("ERROR writing to L");
+
 				n = write(fd_PL, &S_msg, sizeof(S_msg));
 				if (n < 0)
 				error("ERROR writing to P");
@@ -464,19 +490,42 @@ int main(int argc, char *argv[])
 
 			while (1)
 			{
-				n = read(fd_PL, &msg1, sizeof(msg1));
+				int flag;
+				n = read(fd_PL, &flag, sizeof(flag));
 				if (n < 0)
 					error("ERROR receiving from P");
 
-				n = read(fd_PL, &msg2, sizeof(msg2));
+				printf("######### the flag is: %d.\n", flag);
+
+				if (flag == 1) //recognize the type of message coming from G
+				{
+					n = read(fd_PL, &msg1, sizeof(msg1));
+					if (n < 0)
+						error("ERROR receiving from P");
+
+					n = read(fd_PL, &msg2, sizeof(msg2));
+					
+
+					if (n < 0)
+						error("ERROR receiving from P");
+
+					char str[] = " ";
+
+					WriteLog( msg1, msg2,str,true); 
+				}
+				else if (flag == 0) // recognize the type of message coming from S
+				{
+						n = read(fd_PL, &msg3, sizeof(msg3));
+						if (n < 0)
+							error("ERROR receiving from P");
+						msg1.value = msg2.value = 0;
+						msg1.timestamp = msg2.timestamp = 0;
+						
+						WriteLog( msg1, msg2,msg3,false ); 
+						
+						
+				}
 				
-
-				if (n < 0)
-					error("ERROR receiving from P");
-
-				char str[] = " ";
-
-				WriteLog( msg1, msg2,str,true);
 			}
 
 			close(fd_PL);
