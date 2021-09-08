@@ -18,6 +18,7 @@
 #include <sys/select.h>
 #include <netdb.h>
 
+
 #define max(a, b) \
 	({ __typeof__ (a) _a = (a); \
        __typeof__ (b) _b = (b); \
@@ -69,12 +70,6 @@ void error(const char *msg)
 	exit(-1);
 }
 
-int ComputeTimeStamp1 ()
-{
-	time_t currentTime;
-	currentTime = time(NULL);
-    int t_final = (int) currentTime;
-}
 
 double ComputeTimeStamp ()
 {
@@ -120,6 +115,30 @@ void WriteLog(token msg, token token_rx,char *signo_ch, bool isG)
 	fclose(file);
 }
 
+void PrintLogFile()
+{
+    
+   FILE *fptr;
+	char c;
+	fptr = fopen("LogFile.log", "r");
+    if (fptr == NULL)
+    {
+        printf("Cannot open file \n");
+        exit(0);
+    }
+  
+    // Read contents from file
+    c = fgetc(fptr);
+    while (c != EOF)
+    {
+        printf ("%c", c);
+        c = fgetc(fptr);
+    }
+  
+    fclose(fptr);
+	
+}
+
 /* signal handler to manage every signal and the relative functionality (i.e. resuming or interrupting a process) */
 void signal_handler(int signo)
 {	
@@ -132,9 +151,9 @@ void signal_handler(int signo)
 		printf("Received SIGUSR1\n");
 		msg.timestamp = ComputeTimeStamp();
 		msg.sig_name = signame[(int)signo] ;
-		//kill(pid_P, SIGSTOP); // sending tokens
-		//kill(pid_G, SIGSTOP); // receiving tokens
-		//kill(pid_L, SIGSTOP); // logging
+		kill(pid_P, SIGSTOP); // sending tokens
+		kill(pid_G, SIGSTOP); // receiving tokens
+		kill(pid_L, SIGSTOP); // logging
 		
 		//int ns = write(*signo_ch, &str, sizeof(str)); 
 		//printf( "############# %s. \n", signo_ch);
@@ -162,20 +181,32 @@ void signal_handler(int signo)
 	}
 	else if (signo == SIGCONT) // DUMP LOG
 	{
+		kill(pid_P, SIGSTOP); // sending tokens
+		kill(pid_G, SIGSTOP); // receiving tokens
+		kill(pid_L, SIGSTOP); // logging
 		printf("Received SIGCONT\n");
 		printf("Process S PID %d\n :", pid_S);
 
 		
+
 		
 		msg.timestamp = ComputeTimeStamp();
 		msg.sig_name = signame[(int)signo] ;
-		
-		//int ns = write(*signo_ch, &str, sizeof(str)); 
-		int nb = write(fd_PS, &msg, sizeof(msg)); // write the message in the fifo
+		 
+		//int nb = write(fd_PS, &msg, sizeof(msg)); // write the message in the fifo
 		//WriteLog(msg, newToken,str,false);
-		printf("-%sPID: %d value:%s.\n", timeString, pid_S, signame[(int)signo]);
-		printf("-%s%.3f.\n\n", timeString, newToken.value);
+		//printf("-%sPID: %d value:%s.\n", timeString, pid_S, signame[(int)signo]);
+		//printf("-%s%.3f.\n\n", timeString, newToken.value);
+		printf("Received SIGCONT. Printing the content of the LOG file \n");
+		PrintLogFile();
+		
+	
+	sleep(2);
+	printf("\n Send SIGUSR2 if you want to resume the processes \n");
+	
+	
 	}
+	
 	//WriteLog(msg, newToken,signo_ch,false);
 }
 
@@ -199,6 +230,8 @@ void ReadFile(char *ip, char *port, int *waitingTime, char *refFreq)
 
 	fclose(fp);
 }
+
+
 
 int main(int argc, char *argv[])
 {
