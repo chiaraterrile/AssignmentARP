@@ -368,7 +368,7 @@ int main(int argc, char *argv[])
 			FD_SET(fd_PS, &rfds);
 			FD_SET(fd_PG, &rfds);
 			
-			fd = max(fd_PS, fd_PG);
+			//fd = max(fd_PS, fd_PG);
 			//fd = max(fd_PS, fd_PG);
 
 			printf("fd PS = %d ,  fd PG =  %d .\n", fd_PS, fd_PG);
