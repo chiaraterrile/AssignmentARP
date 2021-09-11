@@ -79,11 +79,11 @@ double ComputeTimeStamp ()
 	long int useconds = ts.tv_usec; // microseconds
 
      int size_us = log10(useconds)+1;
-     double useconds_float = (double)useconds* pow(10, -size_us);
-     double seconds_float = (float)seconds;
+     double useconds_d = (double)useconds* pow(10, -size_us);
+     double seconds_d = (float)seconds;
 	 //printf( " **************** useconds FLOAT  : %.6f .\n", useconds_float);
     //  printf( " **************** seconds FLOAT  : %.6f .\n", seconds_float);
-    double t_final =  seconds_float + useconds_float;
+    double t_final =  seconds_d + useconds_d;
       //printf( " **************** t final   : %lf .\n",t_final);
 
     
@@ -419,9 +419,10 @@ int main(int argc, char *argv[])
 						break;
 					} */
 
-
+					double t_rx = ComputeTimeStamp();
 					
 					printf("From G recivedMsg = %.3f \n", G_msg.value);
+					
 
 					int flag = 1; // flag to indicate if the message is coming from G or from S
 					n = write(fd_PL, &flag, sizeof(flag));
@@ -432,7 +433,10 @@ int main(int argc, char *argv[])
 					if (n < 0)
 						error("ERROR writing to L");
 					prec_tok = G_msg;
-					newToken.value = prec_tok.value + 2 * (1 - pow(prec_tok.value,2)/2 ) * 2 * 3.14 * 1;
+					double t_tx = G_msg.timestamp;
+					double DT = t_rx - t_tx ;
+					printf("DT  = %.6f \n", DT);
+					newToken.value = prec_tok.value + DT * (1 - pow(prec_tok.value,2)/2 ) * 2 * 3.14 * 1;
 					printf("NEW TOKEN = %.3f \n", newToken.value);
 					
 					//G_msg += 1; 			////////////////////////////////////////////FORMULA////////////////////////////////////////////////

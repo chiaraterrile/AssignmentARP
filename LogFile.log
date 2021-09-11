@@ -1,81 +1,222 @@
-timestamp : 1631374464.664394 from  G  process , received message :0.000.
-timestamp : 0.000000 from P process, sent token : 12.560.
+timestamp : 1631375488.231320 from  G  process , received message :0.000.
+timestamp : 0.000000 from P process, sent token : 0.001.
 
-timestamp : 1631374464.667767 from  G  process , received message :12.560.
-timestamp : 1631374464.664723 from P process, sent token : -965.573.
+timestamp : 1631375488.232186 from  G  process , received message :0.001.
+timestamp : 1631375488.231643 from P process, sent token : 0.010.
 
-timestamp : 1631374464.669163 from  G  process , received message :-965.573.
-timestamp : 1631374464.667422 from P process, sent token : -5855988.310.
+timestamp : 1631375488.235125 from  G  process , received message :0.010.
+timestamp : 1631375488.233741 from P process, sent token : 0.017.
 
-timestamp : 1631374464.674285 from  G  process , received message :-5855988.310.
-timestamp : 1631374464.672074 from P process, sent token : -215357528099157.656.
+timestamp : 1631375488.237246 from  G  process , received message :0.017.
+timestamp : 1631375488.237106 from P process, sent token : 0.033.
 
-timestamp : 1631374464.678264 from  G  process , received message :-215357528099157.656.
-timestamp : 1631374464.677195 from P process, sent token : -291259271628391321879565041664.000.
+timestamp : 1631375488.242706 from  G  process , received message :0.033.
+timestamp : 1631375488.242130 from P process, sent token : 803.459.
 
-timestamp : 1631374464.682673 from  G  process , received message :-291259271628391321879565041664.000.
-timestamp : 1631374464.681844 from P process, sent token : -532744729583666547419107886178407999723810332867163817246720.000.
+timestamp : 1631375616.247339 from  G  process , received message :803.459.
+timestamp : 1631375616.245698 from P process, sent token : -1582.479.
 
-timestamp : 1631374464.685946 from  G  process , received message :-532744729583666547419107886178407999723810332867163817246720.000.
-timestamp : 1631374464.685091 from P process, sent token : -1782370426526812914623137209198597977802125016364525886795844371416863976095477237172444851639069448045213505125286412288.000.
+timestamp : 1631375616.251218 from  G  process , received message :-1582.479.
+timestamp : 1631375616.250106 from P process, sent token : -11348.097.
 
-timestamp : 1631374464.689726 from  G  process , received message :-1782370426526812914623137209198597977802125016364525886795844371416863976095477237172444851639069448045213505125286412288.000.
-timestamp : 1631374464.689323 from P process, sent token : -19950582438604303498653473442507336423504697598836467278387944775882730091870665518434313619401755739354816196181412268190082303403381364860490604554802567582506013017594429447140108645983595594985432011842767199570774815662674763956493484032.000.
+timestamp : 1631375616.254506 from  G  process , received message :-11348.097.
+timestamp : 1631375616.253675 from P process, sent token : -812792.823.
 
-timestamp : 1631374464.692285 from  G  process , received message :-19950582438604303498653473442507336423504697598836467278387944775882730091870665518434313619401755739354816196181412268190082303403381364860490604554802567582506013017594429447140108645983595594985432011842767199570774815662674763956493484032.000.
-timestamp : 1631374464.692104 from P process, sent token : -inf.
+timestamp : 1631375616.259499 from  G  process , received message :-812792.823.
+timestamp : 1631375616.258790 from P process, sent token : -4529113377.554.
 
-timestamp : 1631374464.695771 from  G  process , received message :-inf.
-timestamp : 1631374464.695165 from P process, sent token : -inf.
+timestamp : 1631375616.263172 from  G  process , received message :-4529113377.554.
+timestamp : 1631375616.262879 from P process, sent token : -167540918055882336.000.
 
-timestamp : 1631374464.764437 .
-From S process signal: SIGUSR1.
+timestamp : 1631375616.266434 from  G  process , received message :-167540918055882336.000.
+timestamp : 1631375616.265910 from P process, sent token : -205539257870472580496992696795136.000.
 
-timestamp : 1631374464.213205 .
-From S process signal: SIGUSR2.
+timestamp : 1631375616.270068 from  G  process , received message :-205539257870472580496992696795136.000.
+timestamp : 1631375616.269790 from P process, sent token : -264402519431270781792193650179151696919970097521139110666829824.000.
 
-timestamp : 1631374464.700598 from  G  process , received message :-inf.
-timestamp : 1631374464.698997 from P process, sent token : -inf.
+timestamp : 1631375616.273326 from  G  process , received message :-264402519431270781792193650179151696919970097521139110666829824.000.
+timestamp : 1631375616.273172 from P process, sent token : -639441829493385299577890591567903675555109950128185007559336433164089777724551834079936397322159646731772923578332611608576.000.
 
-timestamp : 1631374464.213744 from  G  process , received message :-inf.
-timestamp : 1631374464.213474 from P process, sent token : -inf.
+timestamp : 1631375616.279407 from  G  process , received message :-639441829493385299577890591567903675555109950128185007559336433164089777724551834079936397322159646731772923578332611608576.000.
+timestamp : 1631375616.278139 from P process, sent token : -2848928451369529871894631711035358686596086714561160671798017754038466788388923494692681665340385691578029647713582981458957006750740421011318201747055118060938991896908105550861177498131715478036933166924624023896544089586626476518379888836608.000.
 
-timestamp : 1631374464.217794 from  G  process , received message :-inf.
-timestamp : 1631374464.216812 from P process, sent token : -inf.
+timestamp : 1631375616.282649 from  G  process , received message :-2848928451369529871894631711035358686596086714561160671798017754038466788388923494692681665340385691578029647713582981458957006750740421011318201747055118060938991896908105550861177498131715478036933166924624023896544089586626476518379888836608.000.
+timestamp : 1631375616.281977 from P process, sent token : -inf.
 
-timestamp : 1631374464.220641 from  G  process , received message :-inf.
-timestamp : 1631374464.220299 from P process, sent token : -inf.
+timestamp : 1631375616.291576 from  G  process , received message :-inf.
+timestamp : 1631375616.290693 from P process, sent token : -inf.
 
-timestamp : 1631374464.223574 from  G  process , received message :-inf.
-timestamp : 1631374464.223055 from P process, sent token : -inf.
+timestamp : 1631375616.294835 from  G  process , received message :-inf.
+timestamp : 1631375616.294644 from P process, sent token : -inf.
 
-timestamp : 1631374464.226316 from  G  process , received message :-inf.
-timestamp : 1631374464.226017 from P process, sent token : -inf.
+timestamp : 1631375616.299021 from  G  process , received message :-inf.
+timestamp : 1631375616.298765 from P process, sent token : -inf.
 
-timestamp : 1631374464.229959 from  G  process , received message :-inf.
-timestamp : 1631374464.230376 from P process, sent token : -inf.
+timestamp : 1631375616.304985 from  G  process , received message :-inf.
+timestamp : 1631375616.304830 from P process, sent token : -inf.
 
-timestamp : 1631374464.233317 from  G  process , received message :-inf.
-timestamp : 1631374464.232996 from P process, sent token : -inf.
+timestamp : 1631375616.310122 from  G  process , received message :-inf.
+timestamp : 1631375616.309016 from P process, sent token : -inf.
 
-timestamp : 1631374464.235259 from  G  process , received message :-inf.
-timestamp : 1631374464.235039 from P process, sent token : -inf.
+timestamp : 1631375616.315065 from  G  process , received message :-inf.
+timestamp : 1631375616.314379 from P process, sent token : -inf.
 
-timestamp : 1631374464.237917 from  G  process , received message :-inf.
-timestamp : 1631374464.237683 from P process, sent token : -inf.
+timestamp : 1631375616.320156 from  G  process , received message :-inf.
+timestamp : 1631375616.319022 from P process, sent token : -inf.
 
-timestamp : 1631374464.551095 .
-From S process signal: SIGUSR2.
+timestamp : 1631375616.355915 from  G  process , received message :0.000.
+timestamp : 0.000000 from P process, sent token : 0.002.
 
-timestamp : 1631374464.240327 from  G  process , received message :-inf.
-timestamp : 1631374464.240153 from P process, sent token : -inf.
+timestamp : 1631375616.357425 from  G  process , received message :0.002.
+timestamp : 1631375616.356639 from P process, sent token : 0.010.
 
-timestamp : 1631374464.551686 from  G  process , received message :-inf.
-timestamp : 1631374464.551505 from P process, sent token : -inf.
+timestamp : 1631375616.359115 from  G  process , received message :0.010.
+timestamp : 1631375616.358992 from P process, sent token : 0.024.
 
-timestamp : 1631374464.553611 from  G  process , received message :-inf.
-timestamp : 1631374464.553300 from P process, sent token : -inf.
+timestamp : 1631375616.362226 from  G  process , received message :0.024.
+timestamp : 1631375616.362029 from P process, sent token : 0.043.
 
-timestamp : 1631374464.556380 from  G  process , received message :-inf.
-timestamp : 1631374464.555990 from P process, sent token : -inf.
+timestamp : 1631375616.366721 from  G  process , received message :0.043.
+timestamp : 1631375616.366113 from P process, sent token : 0.062.
+
+timestamp : 1631375616.373390 from  G  process , received message :0.062.
+timestamp : 1631375616.369985 from P process, sent token : 0.069.
+
+timestamp : 1631375616.375770 from  G  process , received message :0.069.
+timestamp : 1631375616.374854 from P process, sent token : 0.087.
+
+timestamp : 1631375616.379896 from  G  process , received message :0.087.
+timestamp : 1631375616.378795 from P process, sent token : 0.100.
+
+timestamp : 1631375616.383513 from  G  process , received message :0.100.
+timestamp : 1631375616.383049 from P process, sent token : 0.121.
+
+timestamp : 1631375616.388354 from  G  process , received message :0.121.
+timestamp : 1631375616.386847 from P process, sent token : 0.129.
+
+timestamp : 1631375616.390628 from  G  process , received message :0.129.
+timestamp : 1631375616.389851 from P process, sent token : 0.150.
+
+timestamp : 1631375616.397972 from  G  process , received message :0.150.
+timestamp : 1631375616.396925 from P process, sent token : 0.166.
+
+timestamp : 1631375616.401631 from  G  process , received message :0.166.
+timestamp : 1631375616.400925 from P process, sent token : 0.182.
+
+timestamp : 1631375616.405412 from  G  process , received message :0.182.
+timestamp : 1631375616.405055 from P process, sent token : 0.198.
+
+timestamp : 1631375616.409879 from  G  process , received message :0.198.
+timestamp : 1631375616.408287 from P process, sent token : 0.217.
+
+timestamp : 1631375616.415227 from  G  process , received message :0.217.
+timestamp : 1631375616.413624 from P process, sent token : 0.232.
+
+timestamp : 1631375616.418559 from  G  process , received message :0.232.
+timestamp : 1631375616.417853 from P process, sent token : 0.246.
+
+timestamp : 1631375616.421705 from  G  process , received message :0.246.
+timestamp : 1631375616.421076 from P process, sent token : 0.263.
+
+timestamp : 1631375616.425540 from  G  process , received message :0.263.
+timestamp : 1631375616.424620 from P process, sent token : 0.289.
+
+timestamp : 1631375616.430121 from  G  process , received message :0.289.
+timestamp : 1631375616.430022 from P process, sent token : 0.309.
+
+timestamp : 1631375616.433966 from  G  process , received message :0.309.
+timestamp : 1631375616.433854 from P process, sent token : 0.331.
+
+timestamp : 1631375616.437811 from  G  process , received message :0.331.
+timestamp : 1631375616.437727 from P process, sent token : 0.356.
+
+timestamp : 1631375616.442425 from  G  process , received message :0.356.
+timestamp : 1631375616.442162 from P process, sent token : 0.370.
+
+timestamp : 1631375616.446017 from  G  process , received message :0.370.
+timestamp : 1631375616.444936 from P process, sent token : 0.383.
+
+timestamp : 1631375616.448915 from  G  process , received message :0.383.
+timestamp : 1631375616.448314 from P process, sent token : 0.397.
+
+timestamp : 1631375616.452187 from  G  process , received message :0.397.
+timestamp : 1631375616.451402 from P process, sent token : 0.406.
+
+timestamp : 1631375616.458250 from  G  process , received message :0.406.
+timestamp : 1631375616.453894 from P process, sent token : 0.395.
+
+timestamp : 1631375616.456873 from  G  process , received message :0.395.
+timestamp : 1631375616.456584 from P process, sent token : 0.408.
+
+timestamp : 1631375616.460429 from  G  process , received message :0.408.
+timestamp : 1631375616.460301 from P process, sent token : 0.422.
+
+timestamp : 1631375616.463830 from  G  process , received message :0.422.
+timestamp : 1631375616.463106 from P process, sent token : 0.437.
+
+timestamp : 1631375616.467591 from  G  process , received message :0.437.
+timestamp : 1631375616.466770 from P process, sent token : 0.455.
+
+timestamp : 1631375616.473130 from  G  process , received message :0.455.
+timestamp : 1631375616.470869 from P process, sent token : 0.461.
+
+timestamp : 1631375616.475947 from  G  process , received message :0.461.
+timestamp : 1631375616.474818 from P process, sent token : 0.471.
+
+timestamp : 1631375616.478764 from  G  process , received message :0.471.
+timestamp : 1631375616.477922 from P process, sent token : 0.482.
+
+timestamp : 1631375616.481063 from  G  process , received message :0.482.
+timestamp : 1631375616.480895 from P process, sent token : 0.496.
+
+timestamp : 1631375616.485789 from  G  process , received message :0.496.
+timestamp : 1631375616.483944 from P process, sent token : 0.503.
+
+timestamp : 1631375616.489895 from  G  process , received message :0.503.
+timestamp : 1631375616.487949 from P process, sent token : 0.517.
+
+timestamp : 1631375616.493543 from  G  process , received message :0.517.
+timestamp : 1631375616.492853 from P process, sent token : 0.530.
+
+timestamp : 1631375616.499521 from  G  process , received message :0.530.
+timestamp : 1631375616.498231 from P process, sent token : 0.546.
+
+timestamp : 1631375616.504869 from  G  process , received message :0.546.
+timestamp : 1631375616.502989 from P process, sent token : 684.432.
+
+timestamp : 1631375744.509655 from  G  process , received message :684.432.
+timestamp : 1631375744.507947 from P process, sent token : -3178.114.
+
+timestamp : 1631375744.513912 from  G  process , received message :-3178.114.
+timestamp : 1631375744.512612 from P process, sent token : -45772.115.
+
+timestamp : 1631375744.515718 from  G  process , received message :-45772.115.
+timestamp : 1631375744.515499 from P process, sent token : -14037947.557.
+
+timestamp : 1631375744.519111 from  G  process , received message :-14037947.557.
+timestamp : 1631375744.518135 from P process, sent token : -1061336627996.998.
+
+timestamp : 1631375744.523504 from  G  process , received message :-1061336627996.998.
+timestamp : 1631375744.521397 from P process, sent token : -7770901213751585800192.000.
+
+timestamp : 1631375744.527710 from  G  process , received message :-7770901213751585800192.000.
+timestamp : 1631375744.527180 from P process, sent token : -265640510869699859360432784855952141582336.000.
+
+timestamp : 1631375744.530369 from  G  process , received message :-265640510869699859360432784855952141582336.000.
+timestamp : 1631375744.529228 from P process, sent token : -338094675273836571338111852917028834685905138043738841372017385983644194222112768.000.
+
+timestamp : 1631375744.533612 from  G  process , received message :-338094675273836571338111852917028834685905138043738841372017385983644194222112768.000.
+timestamp : 1631375744.532495 from P process, sent token : -898707610563534284818939150732526641966432297183051615401342584898556909085672096081965079410521691155772598127560625253694231809634737575533532946927376662528.000.
+
+timestamp : 1631375744.537799 from  G  process , received message :-898707610563534284818939150732526641966432297183051615401342584898556909085672096081965079410521691155772598127560625253694231809634737575533532946927376662528.000.
+timestamp : 1631375744.537056 from P process, sent token : -inf.
+
+timestamp : 1631375744.541004 from  G  process , received message :-inf.
+timestamp : 1631375744.540052 from P process, sent token : -inf.
+
+timestamp : 1631375744.548695 from  G  process , received message :-inf.
+timestamp : 1631375744.543129 from P process, sent token : -nan.
+
+timestamp : 1631375744.549697 from  G  process , received message :-nan.
+timestamp : 1631375744.546129 from P process, sent token : -nan.
 
