@@ -1,3 +1,6 @@
+// ARP assignment 2019-2020
+// Terrile Chiara ID : S4337786
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -21,10 +24,12 @@ void error(const char *msg)
      exit(1);
 }
 
+// type of message exchanged between G and P processes
 typedef struct {
-	double value;
-	double timestamp;
+	double value; // value of the token
+	double timestamp; // timestamp in which the token is sent from G to P
 }token;
+
 
 
 
